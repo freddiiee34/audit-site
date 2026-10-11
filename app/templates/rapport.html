@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block titre %}Rapport d'audit · {{ audit.url_finale }}{% endblock %}
+{% block tete %}<meta name="robots" content="noindex">{% endblock %}
+{% block bandeau %}<button class="lien-imprimer" onclick="window.print()">Imprimer ou enregistrer en PDF</button>{% endblock %}
+{% block contenu %}
+{% set s = audit.score %}
+{% set niveau = 'bon' if s >= 80 else ('moyen' if s >= 55 else 'faible') %}
+
+<section class="entete-rapport">
+  <div class="jauge jauge-{{ niveau }}" role="img" aria-label="Score {{ s }} sur 100">
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="52" class="jauge-fond"/>
+      <circle cx="60" cy="60" r="52" class="jauge-valeur" pathLength="100"
+              stroke-dasharray="{{ s }} 100" transform="rotate(-90 60 60)"/>
+    </svg>
+    <span class="jauge-chiffre">{{ s }}<small>/100</small></span>
+  </div>
+  <div>
+    <p class="surtitre">Audit du {{ audit.date[:10] }}</p>
+    <h1 class="url-site">{{ audit.url_finale }}</h1>
+    <p class="chapo">{{ rapport.resume }}</p>
+    {% if email_envoye %}<p class="note">Une copie de ce rapport vous a été envoyée par email.</p>{% endif %}
+  </div>
+</section>
+
+<section class="categories">
+  {% for cle, nom in categories.items() if cle in audit.scores_categories %}
+    {% set sc = audit.scores_categories[cle] %}
+    <div class="categorie">
+      <span>{{ nom }}</span>
+      <div class="barre"><div class="barre-valeur niveau-{{ 'bon' if sc >= 80 else ('moyen' if sc >= 55 else 'faible') }}" style="width: {{ sc }}%"></div></div>
+      <strong>{{ sc }}</strong>
+    </div>
+  {% endfor %}
+</section>
+
+{% if rapport.priorites %}
+<section>
+  <h2>Vos {{ rapport.priorites|length }} priorités</h2>
+  <ol class="priorites">
+    {% for p in rapport.priorites %}
+    <li class="carte priorite">
+      <div class="priorite-tete">
+        <span class="numero">{{ loop.index }}</span>
+        <h3>{{ p.titre }}</h3>
+        <span class="pastille pastille-{{ p.statut }}">{{ libelles[p.statut] }}</span>
+      </div>
+      <p><strong>Pourquoi c'est important.</strong> {{ p.pourquoi }}</p>
+      <p><strong>Que faire.</strong> {{ p.comment }}</p>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+{% endif %}
+
+<section class="carte appel">
+  <div>
+    <h2>Besoin d'aide pour corriger ces points&nbsp;?</h2>
+    <p>On en parle 20 minutes, gratuitement : je vous dis ce qui est rapide à corriger vous-même et ce qui demande un développeur.</p>
+  </div>
+  <a class="bouton" href="{{ lien_rdv }}">Prendre rendez-vous</a>
+</section>
+
+{% if rapport.points_forts %}
+<section>
+  <h2>Ce qui fonctionne déjà</h2>
+  <ul class="points-forts">
+    {% for f in rapport.points_forts %}<li>{{ f }}</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="detail">
+  <h2>Le détail des contrôles</h2>
+  {% for cle, nom in categories.items() if cle in par_categorie %}
+  <details {% if loop.first %}open{% endif %}>
+    <summary>{{ nom }}{% if cle in audit.scores_categories %} · {{ audit.scores_categories[cle] }}/100{% endif %}</summary>
+    <table>
+      <thead><tr><th scope="col">Contrôle</th><th scope="col">Résultat</th><th scope="col">Constat</th></tr></thead>
+      <tbody>
+      {% for r in par_categorie[cle] %}
+        <tr>
+          <td>{{ r.titre }}</td>
+          <td><span class="pastille pastille-{{ r.statut }}">{{ libelles[r.statut] }}</span></td>
+          <td>{{ r.constat }}{% if r.statut in ['attention', 'probleme'] %}<br><em>{{ r.conseil }}</em>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </details>
+  {% endfor %}
+  <p class="note">Analyse automatique de la page d'accueil et de ses liens. Elle ne remplace pas un audit complet, mais elle repère l'essentiel.{% if not rapport.redige_par_ia %} Rapport généré sans rédaction IA.{% endif %}</p>
+</section>
+{% endblock %}

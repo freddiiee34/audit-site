@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block titre %}Audit gratuit de votre site · {{ nom_service }}{% endblock %}
+{% block contenu %}
+<section class="accroche">
+  <div class="accroche-texte">
+    <p class="surtitre">Audit gratuit · résultat en 1 minute</p>
+    <h1>Votre site vous fait-il perdre des clients&nbsp;?</h1>
+    <p class="chapo">Entrez l'adresse de votre site. Vous recevez un rapport clair, sans jargon, avec les 5 choses à corriger en priorité.</p>
+  </div>
+
+  <form class="carte formulaire" method="post" action="/audit" id="form-audit">
+    {% if erreur %}<p class="alerte" role="alert">{{ erreur }}</p>{% endif %}
+    <label for="url">Adresse de votre site</label>
+    <input id="url" name="url" type="text" inputmode="url" placeholder="www.monentreprise.fr" value="{{ url or '' }}" required autocomplete="url">
+
+    <label for="email">Votre email, pour recevoir le rapport</label>
+    <input id="email" name="email" type="email" placeholder="vous@monentreprise.fr" value="{{ email or '' }}" required autocomplete="email">
+
+    <div class="piege" aria-hidden="true">
+      <label for="site_web">Ne pas remplir</label>
+      <input id="site_web" name="site_web" type="text" tabindex="-1" autocomplete="off">
+    </div>
+
+    <label class="case">
+      <input type="checkbox" name="consentement" value="oui" required>
+      <span>J'accepte de recevoir mon rapport par email et d'être recontacté à son sujet. Pas de newsletter, pas de revente.</span>
+    </label>
+
+    <button type="submit" id="bouton">Analyser mon site</button>
+    <p class="attente" id="attente" hidden>Analyse en cours… cela prend 20 à 40 secondes.</p>
+  </form>
+</section>
+
+<section class="controles">
+  <h2>Ce que l'on vérifie</h2>
+  <ul class="grille">
+    <li><strong>Vitesse</strong><span>Temps de réponse, poids de la page, fichiers chargés.</span></li>
+    <li><strong>Référencement Google</strong><span>Titre, description, sitemap, liens cassés, visibilité.</span></li>
+    <li><strong>Mobile</strong><span>Affichage correct sur téléphone.</span></li>
+    <li><strong>Sécurité</strong><span>HTTPS et redirections.</span></li>
+    <li><strong>Obligations légales</strong><span>Mentions légales, confidentialité, bandeau cookies.</span></li>
+    <li><strong>Accessibilité</strong><span>Images décrites, formulaires lisibles.</span></li>
+  </ul>
+</section>
+
+<script>
+  document.getElementById("form-audit").addEventListener("submit", function () {
+    var b = document.getElementById("bouton");
+    b.disabled = true;
+    b.textContent = "Analyse en cours…";
+    document.getElementById("attente").hidden = false;
+  });
+</script>
+{% endblock %}

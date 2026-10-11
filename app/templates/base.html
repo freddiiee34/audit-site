@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titre %}{{ nom_service }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}Audit gratuit de votre site en 1 minute : vitesse, Google, mobile, sécurité et obligations légales, expliqués simplement.{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Public+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  {% block tete %}{% endblock %}
+</head>
+<body>
+  <header class="bandeau">
+    <a class="marque" href="/">{{ nom_service }}</a>
+    {% block bandeau %}{% endblock %}
+  </header>
+  <main>
+    {% block contenu %}{% endblock %}
+  </main>
+  <footer class="pied">
+    <p>{{ signature }} · Les emails collectés servent uniquement à envoyer votre rapport et à vous recontacter à son sujet.</p>
+  </footer>
+</body>
+</html>
