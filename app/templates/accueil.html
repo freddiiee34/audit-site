@@ -1,20 +1,23 @@
 {% extends "base.html" %}
 {% block titre %}Audit gratuit de votre site · {{ nom_service }}{% endblock %}
 {% block contenu %}
-<section class="accroche">
-  <div class="accroche-texte">
-    <p class="surtitre">Audit gratuit · résultat en 1 minute</p>
-    <h1>Votre site vous fait-il perdre des clients&nbsp;?</h1>
-    <p class="chapo">Entrez l'adresse de votre site. Vous recevez un rapport clair, sans jargon, avec les 5 choses à corriger en priorité.</p>
-  </div>
+<section class="hero">
+  <p class="surtitre">Audit gratuit. Résultat en une minute.</p>
+  <h1>Votre site vous fait&#8209;il perdre des clients&nbsp;?</h1>
+  <p class="chapo">Entrez son adresse. Vous recevez un rapport clair, sans jargon, avec les 5 choses à corriger en priorité.</p>
 
-  <form class="carte formulaire" method="post" action="/audit" id="form-audit">
+  <form class="formulaire" method="post" action="/audit" id="form-audit">
     {% if erreur %}<p class="alerte" role="alert">{{ erreur }}</p>{% endif %}
-    <label for="url">Adresse de votre site</label>
-    <input id="url" name="url" type="text" inputmode="url" placeholder="www.monentreprise.fr" value="{{ url or '' }}" required autocomplete="url">
-
-    <label for="email">Votre email, pour recevoir le rapport</label>
-    <input id="email" name="email" type="email" placeholder="vous@monentreprise.fr" value="{{ email or '' }}" required autocomplete="email">
+    <div class="champs">
+      <div class="champ">
+        <label for="url">Adresse de votre site</label>
+        <input id="url" name="url" type="text" inputmode="url" placeholder="www.monentreprise.fr" value="{{ url or '' }}" required autocomplete="url">
+      </div>
+      <div class="champ">
+        <label for="email">Votre email</label>
+        <input id="email" name="email" type="email" placeholder="vous@monentreprise.fr" value="{{ email or '' }}" required autocomplete="email">
+      </div>
+    </div>
 
     <div class="piege" aria-hidden="true">
       <label for="site_web">Ne pas remplir</label>
@@ -27,12 +30,12 @@
     </label>
 
     <button type="submit" id="bouton">Analyser mon site</button>
-    <p class="attente" id="attente" hidden>Analyse en cours… cela prend 20 à 40 secondes.</p>
+    <p class="attente" id="attente" hidden>Analyse en cours. Cela prend 20 à 40 secondes.</p>
   </form>
 </section>
 
 <section class="controles">
-  <h2>Ce que l'on vérifie</h2>
+  <h2>Six points vérifiés.<br><span class="gris">Expliqués simplement.</span></h2>
   <ul class="grille">
     <li><strong>Vitesse</strong><span>Temps de réponse, poids de la page, fichiers chargés.</span></li>
     <li><strong>Référencement Google</strong><span>Titre, description, sitemap, liens cassés, visibilité.</span></li>
