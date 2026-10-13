@@ -54,9 +54,11 @@ def contexte_commun() -> dict:
 
 def ip_client(request: Request) -> str:
     if os.getenv("DERRIERE_PROXY") == "1":
+        # Le proxy ajoute l'IP réelle EN DERNIER : les entrées précédentes
+        # peuvent être inventées par le visiteur pour contourner les limites.
         transmis = request.headers.get("x-forwarded-for", "")
         if transmis:
-            return transmis.split(",")[0].strip()
+            return transmis.split(",")[-1].strip()
     return request.client.host if request.client else "inconnue"
 
 

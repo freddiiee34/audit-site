@@ -103,13 +103,16 @@ Les tests lancent deux faux sites en local (un bon, un mauvais) et vérifient ch
 
 ## Mise en ligne
 
-Le plus simple : un petit VPS ou une plateforme comme Render, Railway ou Fly.io.
+Le projet est livré avec un `Dockerfile` prêt pour Coolify (ou toute plateforme qui sait construire une image Docker) :
 
-```bash
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
-```
+- l'application écoute sur le port **8000** ;
+- la base SQLite est dans **`/data`** : monte-y un volume persistant, sinon les rapports et les leads disparaissent à chaque redéploiement ;
+- `DERRIERE_PROXY=1` est déjà réglé : l'IP du visiteur est lue dans l'en-tête ajouté par le proxy ;
+- un healthcheck interroge `/sante`.
 
-Mets un reverse proxy (Caddy ou Nginx) devant pour le HTTPS, avec `DERRIERE_PROXY=1`. Monte le fichier SQLite sur un volume persistant, sinon les rapports disparaissent à chaque redéploiement.
+Les réglages (clés API, `AUDIT_SEL`, `LIEN_RDV`…) se saisissent dans les variables d'environnement de la plateforme, jamais dans le dépôt.
+
+Sans Docker : `python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2 --proxy-headers`, derrière un reverse proxy (Caddy ou Nginx) pour le HTTPS.
 
 ## Limites connues (prochaines étapes)
 

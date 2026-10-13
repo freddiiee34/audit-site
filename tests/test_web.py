@@ -63,6 +63,14 @@ def test_rapport_inconnu(client):
     assert client.get("/rapport/../../etc").status_code == 404
 
 
+def test_ip_derriere_proxy_non_falsifiable(monkeypatch):
+    from types import SimpleNamespace
+    from app.main import ip_client
+    monkeypatch.setenv("DERRIERE_PROXY", "1")
+    req = SimpleNamespace(headers={"x-forwarded-for": "1.2.3.4, 203.0.113.9"}, client=None)
+    assert ip_client(req) == "203.0.113.9"  # l'IP ajoutée par le proxy, pas celle inventée
+
+
 def test_ip_stockee_hachee(client, site_bon):
     client.post("/audit", data=formulaire(site_bon, email="hash@exemple.fr"))
     with stockage.connexion() as con:
