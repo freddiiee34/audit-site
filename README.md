@@ -25,14 +25,51 @@ L'IA ne fait **pas** l'analyse : elle reçoit uniquement les constats mesurés e
 
 ## Installation
 
-```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # puis remplir les valeurs
-uvicorn app.main:app --reload
+Prérequis : Python 3.10 ou plus (`python3 --version` pour vérifier).
+
+### Windows (invite de commandes)
+
+```
+cd chemin\vers\audit-site
+python3 -m venv .venv
+.venv\Scripts\activate
+python3 -m pip install -r requirements.txt
+copy .env.example .env
+notepad .env
+python3 -m uvicorn app.main:app --reload
 ```
 
-Puis ouvrir http://127.0.0.1:8000.
+Si `python3` n'est pas reconnu, remplace-le par `py` (par exemple `py -m venv .venv`).
+
+### Mac et Linux (Terminal)
+
+```bash
+cd chemin/vers/audit-site
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
+cp .env.example .env
+open -e .env        # sous Linux : nano .env
+python3 -m uvicorn app.main:app --reload
+```
+
+### Ensuite
+
+Ouvre http://127.0.0.1:8000 dans ton navigateur. Ctrl + C dans le terminal arrête le serveur.
+
+Les fois suivantes, il suffit de te placer dans le dossier, d'activer l'environnement (`.venv\Scripts\activate` sous Windows, `source .venv/bin/activate` sur Mac) et de relancer la dernière commande.
+
+**Pour tester en local**, passe `AUDIT_LIMITE_EMAIL` à 100 dans le `.env` : la limite par défaut (3 audits par email et par jour) te bloquerait vite.
+
+### En cas de problème
+
+| Message | Solution |
+| --- | --- |
+| `'source' n'est pas reconnu…` | Tu es sous Windows : utilise `.venv\Scripts\activate` |
+| `python3` introuvable | Windows : utilise `py`. Mac : `xcode-select --install`, ou installe Python depuis python.org |
+| `pip` ou `uvicorn` introuvable | Préfixe par `python3 -m` (`python3 -m pip …`, `python3 -m uvicorn …`) et vérifie que `(.venv)` apparaît au début de la ligne |
+| Dossier introuvable après `cd` | Tape `cd ` puis glisse le dossier depuis l'Explorateur ou le Finder dans la fenêtre |
+| « Vous avez déjà demandé 3 audits » | Augmente `AUDIT_LIMITE_EMAIL` dans le `.env` |
 
 ## Configuration (`.env`)
 
@@ -58,8 +95,8 @@ Puis ouvrir http://127.0.0.1:8000.
 ## Tests
 
 ```bash
-pip install pytest
-python -m pytest
+python3 -m pip install pytest
+python3 -m pytest
 ```
 
 Les tests lancent deux faux sites en local (un bon, un mauvais) et vérifient chaque contrôle, le score, les priorités, le filtrage des réponses de l'IA, les replis, le blocage des adresses internes, les limites et le parcours web complet.
@@ -69,7 +106,7 @@ Les tests lancent deux faux sites en local (un bon, un mauvais) et vérifient ch
 Le plus simple : un petit VPS ou une plateforme comme Render, Railway ou Fly.io.
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
 ```
 
 Mets un reverse proxy (Caddy ou Nginx) devant pour le HTTPS, avec `DERRIERE_PROXY=1`. Monte le fichier SQLite sur un volume persistant, sinon les rapports disparaissent à chaque redéploiement.
