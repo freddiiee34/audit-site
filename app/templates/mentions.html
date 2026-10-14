@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titre %}Mentions légales · Simon Delrue{% endblock %}
+{% block tete %}{% if url_publique %}<link rel="canonical" href="{{ url_publique }}/mentions-legales">{% endif %}{% endblock %}
+{% block contenu %}
+<article class="page-texte">
+  <h1>Mentions légales</h1>
+
+  <h2>Éditeur du site</h2>
+  <p>
+    {{ editeur.nom }}, {{ editeur.statut|lower }}<br>
+    {% if editeur.adresse %}{{ editeur.adresse }}<br>{% endif %}
+    {% if editeur.siret %}SIRET&nbsp;: {{ editeur.siret }}<br>{% endif %}
+    {% if editeur.email %}Email&nbsp;: <a href="mailto:{{ editeur.email }}">{{ editeur.email }}</a><br>{% endif %}
+    {% if editeur.telephone %}Téléphone&nbsp;: {{ editeur.telephone }}<br>{% endif %}
+    Directeur de la publication&nbsp;: {{ editeur.nom }}
+  </p>
+
+  <h2>Hébergement</h2>
+  <p>OVH SAS, 2 rue Kellermann, 59100 Roubaix, France. Téléphone&nbsp;: 1007. <a href="https://www.ovhcloud.com">ovhcloud.com</a></p>
+
+  <h2>Propriété intellectuelle</h2>
+  <p>Les textes, le code et les éléments graphiques de ce site sont la propriété de {{ editeur.nom }}. Les rapports d'audit générés appartiennent à la personne qui les a demandés, qui peut les réutiliser librement.</p>
+
+  <h2>Responsabilité</h2>
+  <p>L'audit est une analyse automatique de la page d'accueil publique d'un site. Il donne des indications et ne remplace pas un audit complet réalisé par un professionnel.</p>
+
+  <h2>Données personnelles et cookies</h2>
+  <p>Ce site ne dépose aucun cookie et n'utilise aucun outil de mesure d'audience. Le traitement de vos données est décrit dans la <a href="/confidentialite">politique de confidentialité</a>.</p>
+</article>
+{% endblock %}

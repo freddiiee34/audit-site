@@ -1,0 +1,357 @@
+/* Direction « contrôle technique » : l'audit se lit comme un procès-verbal
+   d'inspection. Ardoise sombre, texte blanc cassé, un seul accent jaune
+   signalisation, angles nets, aucune ombre ni dégradé. Une seule animation :
+   la progression de l'analyse. */
+@font-face {
+  font-family: "Schibsted Grotesk";
+  src: url("/static/fonts/schibsted.woff2") format("woff2");
+  font-weight: 400 900;
+  font-display: swap;
+}
+:root {
+  --fond: #1c2326;
+  --surface: #232b2f;
+  --surface-2: #2c3539;
+  --champ: #182023;
+  --trait: #39444a;
+  --trait-fort: #55626a;
+  --texte: #e9e6df;
+  --gris: #9aa29f;
+  --gris-clair: #c3c7c2;
+  --accent: #e8b23a;
+  --accent-texte: #1c2326;
+  --lien: #f0c560;
+  --bon: #8cc08a;
+  --moyen: #e8b23a;
+  --faible: #e0715a;
+  --rayon: 3px;
+  --police: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --colonne: 1080px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--fond); color: var(--texte);
+  font: 400 18px/1.55 var(--police);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+main { max-width: var(--colonne); margin: 0 auto; padding: 0 24px 112px; }
+h1, h2, h3 { font-weight: 700; margin: 0 0 12px; }
+h1 { font-size: clamp(44px, 7.4vw, 92px); line-height: 1; letter-spacing: -0.022em; font-weight: 800; word-spacing: 0.04em; }
+h2 { font-size: clamp(30px, 4vw, 46px); line-height: 1.06; letter-spacing: -0.025em; margin-top: 112px; }
+h3 { font-size: 20px; line-height: 1.25; letter-spacing: -0.01em; }
+p { margin: 0 0 16px; }
+a { color: var(--lien); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+.gris { color: var(--gris); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* --- En-tête et pied --------------------------------------------------------- */
+.bandeau {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  max-width: var(--colonne); margin: 0 auto; padding: 20px 24px;
+  border-bottom: 1px solid var(--trait);
+}
+.marque { display: flex; align-items: center; gap: 12px; color: var(--texte); text-decoration: none; }
+.marque > span { display: flex; flex-direction: column; font-size: 17px; font-weight: 700; line-height: 1.15; }
+.marque small { font-size: 13px; font-weight: 400; color: var(--gris); }
+.logo { width: 34px; height: 34px; flex: none; color: var(--texte); }
+.lien-bandeau { font-size: 15px; }
+.lien-imprimer { font: 500 15px var(--police); color: var(--lien); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+.pied { max-width: var(--colonne); margin: 0 auto; padding: 28px 24px 56px; border-top: 1px solid var(--trait); font-size: 14px; color: var(--gris); }
+.pied p { margin: 0 0 12px; }
+.pied nav { display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.pied a { color: var(--gris-clair); }
+
+.surtitre { margin: 0 0 18px; font-size: 16px; font-weight: 600; color: var(--accent); }
+.chapo { font-size: clamp(20px, 2.2vw, 24px); line-height: 1.45; color: var(--gris-clair); max-width: 40ch; margin: 0; }
+.note { font-size: 14px; color: var(--gris); }
+.carte { background: var(--surface); border: 1px solid var(--trait); border-radius: var(--rayon); padding: 28px; }
+.visuellement-cache { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* --- Accueil : en-tête aligné à gauche, formulaire comme un champ de saisie --- */
+.hero { padding: 96px 0 0; }
+.hero h1 { max-width: 13ch; margin: 0 0 28px; }
+
+.formulaire { max-width: 720px; margin: 48px 0 0; }
+.ligne-url { display: flex; border: 1px solid var(--trait-fort); border-radius: var(--rayon); background: var(--champ); }
+.ligne-url:focus-within { border-color: var(--accent); }
+.ligne-url input { flex: 1; min-width: 0; border: 0 !important; background: transparent !important; }
+.ligne-url input:focus { box-shadow: none !important; }
+.ligne-url button[type=submit] { width: auto; margin: 0; border-radius: 0 2px 2px 0; flex: none; }
+.formulaire input[type=text], .formulaire input[type=email], .formulaire input[type=tel], .formulaire textarea {
+  width: 100%; font: 400 18px/1.4 var(--police); color: var(--texte);
+  padding: 16px 18px; border-radius: var(--rayon); border: 1px solid var(--trait-fort); background: var(--champ);
+}
+.formulaire input::placeholder, .formulaire textarea::placeholder { color: #6f7976; }
+.formulaire input:focus, .formulaire textarea:focus { outline: none; border-color: var(--accent); }
+.formulaire textarea { resize: vertical; }
+.champs { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.champ label { display: block; font-size: 14px; font-weight: 600; color: var(--gris-clair); margin: 0 0 8px; }
+.champ-large { margin-top: 18px; }
+.facultatif { color: var(--gris); font-weight: 400; }
+.rassurance { margin: 14px 0 0; font-size: 14px; color: var(--gris); }
+.compteur { margin: 28px 0 0; font-size: 16px; color: var(--gris-clair); }
+.case { display: flex; gap: 12px; align-items: flex-start; margin-top: 18px; font-size: 14px; line-height: 1.5; color: var(--gris); cursor: pointer; }
+.case input { margin: 3px 0 0; width: 16px; height: 16px; flex: none; accent-color: var(--accent); }
+.piege { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.alerte { border-left: 3px solid var(--faible); background: rgba(224, 113, 90, 0.10); color: #f1a493; padding: 12px 16px; margin: 0 0 20px; font-size: 16px; }
+
+button[type=submit], .bouton {
+  display: inline-block; text-align: center; cursor: pointer; text-decoration: none;
+  font: 700 17px var(--police); color: var(--accent-texte);
+  background: var(--accent); border: 0; border-radius: var(--rayon); padding: 16px 26px;
+}
+button[type=submit] { width: 100%; margin-top: 24px; }
+button[type=submit]:hover, .bouton:hover { background: #f0c25a; text-decoration: none; }
+button[type=submit]:disabled { cursor: progress; background: var(--surface-2); color: var(--gris-clair); }
+.bouton-secondaire { background: transparent; color: var(--texte); box-shadow: inset 0 0 0 1px var(--trait-fort); }
+.bouton-secondaire:hover { background: var(--surface-2); }
+
+/* Seule animation : la progression, en barre et en états écrits */
+.progression { margin-top: 28px; padding: 22px 24px; border: 1px solid var(--trait); border-radius: var(--rayon); background: var(--surface); }
+.progression-titre { margin: 0 0 16px; font-size: 16px; color: var(--gris-clair); overflow-wrap: anywhere; }
+.progression-titre strong { color: var(--texte); }
+.progression ol { list-style: none; margin: 0; padding: 0; counter-reset: etape; }
+.progression li {
+  display: flex; justify-content: space-between; gap: 16px; padding: 9px 0;
+  border-top: 1px solid var(--trait); font-size: 16px; color: #6f7976;
+}
+.progression li::after { content: "en attente"; font-size: 14px; color: #6f7976; }
+.progression li.en-cours { color: var(--texte); }
+.progression li.en-cours::after { content: "en cours"; color: var(--accent); }
+.progression li.fait { color: var(--gris-clair); }
+.progression li.fait::after { content: "fait"; color: var(--bon); }
+.progression ol { position: relative; }
+.progression ol::before {
+  content: ""; display: block; height: 3px; margin-bottom: 8px; background: var(--trait);
+  background-image: linear-gradient(var(--accent), var(--accent)); background-repeat: no-repeat;
+  background-size: 0 100%; animation: avance 32s linear forwards;
+}
+@keyframes avance { to { background-size: 92% 100%; } }
+.progression .note { margin: 16px 0 0; }
+
+/* Les six points : une liste de contrôle, pas une grille de cartes */
+.controles h2 { max-width: 20ch; margin-bottom: 40px; }
+.controles h2 br { display: none; }
+.controles h2 .gris { display: block; }
+.grille { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--trait); }
+.grille li {
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px;
+  padding: 26px 0; border-bottom: 1px solid var(--trait);
+}
+.grille strong { font-size: clamp(20px, 2.1vw, 24px); line-height: 1.25; font-weight: 700; letter-spacing: -0.012em; }
+.grille span { font-size: 16px; line-height: 1.5; color: var(--gris); padding-top: 4px; }
+
+/* Qui est derrière l'outil : encadré avec photo ronde, comme la première version */
+.auteur {
+  margin-top: 112px; display: grid; grid-template-columns: 160px 1fr; gap: 44px; align-items: start;
+  background: var(--surface); border: 1px solid var(--trait); border-radius: var(--rayon); padding: 44px;
+}
+.auteur h2 { margin: 0 0 4px; }
+.auteur .surtitre { margin-bottom: 12px; color: var(--gris-clair); }
+.auteur .role { margin: 0 0 22px; font-size: 20px; font-weight: 600; color: var(--accent); }
+.auteur p { color: var(--gris-clair); max-width: 60ch; }
+.auteur-visuel img, .initiales { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; display: block; }
+.initiales { display: grid; place-items: center; background: var(--surface-2); color: var(--texte); font-size: 52px; font-weight: 800; box-shadow: inset 0 0 0 4px var(--accent); }
+.initiales.petite { width: 40px; height: 40px; font-size: 15px; box-shadow: inset 0 0 0 2px var(--accent); }
+.auteur-liens { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-bottom: 0; }
+
+.avis ul { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
+.avis blockquote { margin: 0; padding-left: 20px; border-left: 3px solid var(--accent); font-size: 19px; }
+.avis-auteur { margin: 14px 0 0 23px; font-size: 15px; color: var(--gris); }
+
+.faq { max-width: 780px; }
+.faq details { border-bottom: 1px solid var(--trait); }
+.faq details:first-of-type { border-top: 1px solid var(--trait); }
+.faq summary { cursor: pointer; list-style: none; padding: 22px 0; font-size: 20px; font-weight: 700; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "Lire"; font-size: 15px; font-weight: 500; color: var(--gris); padding-top: 4px; }
+.faq details[open] summary::after { content: "Fermer"; }
+.faq details p { margin: 0 0 24px; color: var(--gris-clair); max-width: 62ch; }
+
+/* --- Rapport : un procès-verbal -------------------------------------------------- */
+.entete-rapport { display: grid; grid-template-columns: 180px 1fr; gap: 48px; align-items: center; padding-top: 80px; }
+.entete-rapport .chapo { font-size: 20px; max-width: 52ch; }
+.url-site { font-size: clamp(30px, 4.6vw, 52px); line-height: 1.05; overflow-wrap: anywhere; }
+.jauge { position: relative; width: 180px; height: 180px; }
+.jauge svg { width: 100%; height: 100%; }
+.jauge-fond { fill: none; stroke: var(--trait); stroke-width: 6; }
+.jauge-valeur { fill: none; stroke-width: 6; stroke-linecap: butt; }
+.jauge-bon .jauge-valeur { stroke: var(--bon); }
+.jauge-moyen .jauge-valeur { stroke: var(--moyen); }
+.jauge-faible .jauge-valeur { stroke: var(--faible); }
+.jauge-chiffre { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font: 800 60px/1 var(--police); letter-spacing: -0.04em; }
+.jauge-chiffre small { font: 500 15px/1.6 var(--police); color: var(--gris); letter-spacing: 0; }
+
+.categories { margin-top: 64px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 56px; border-top: 1px solid var(--trait); }
+.categorie { display: grid; grid-template-columns: 190px 1fr 40px; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--trait); font-size: 16px; color: var(--gris-clair); }
+.categorie strong { text-align: right; color: var(--texte); }
+.barre { height: 4px; background: var(--trait); }
+.barre-valeur { height: 100%; }
+.niveau-bon { background: var(--bon); }
+.niveau-moyen { background: var(--moyen); }
+.niveau-faible { background: var(--faible); }
+
+.priorites { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--trait); }
+.priorite { background: none !important; border: 0 !important; border-bottom: 1px solid var(--trait) !important; border-radius: 0 !important; padding: 26px 0 !important; }
+.priorite p { margin: 12px 0 0 52px; color: var(--gris-clair); font-size: 17px; max-width: 70ch; }
+.priorite p strong { color: var(--texte); }
+.priorite-tete { display: flex; align-items: baseline; gap: 20px; }
+.priorite-tete h3 { margin: 0; flex: 1; font-size: 22px; }
+.numero { flex: none; width: 32px; font-size: 22px; font-weight: 800; color: var(--accent); }
+.priorites-apercu .priorite { padding: 18px 0 !important; }
+.pastille { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.pastille::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; vertical-align: 1px; }
+.pastille-ok { color: var(--bon); } .pastille-ok::before { background: var(--bon); }
+.pastille-attention { color: var(--moyen); } .pastille-attention::before { background: var(--moyen); }
+.pastille-probleme { color: var(--faible); } .pastille-probleme::before { background: var(--faible); }
+.pastille-info { color: var(--gris); } .pastille-info::before { background: var(--gris); }
+
+.deblocage { max-width: none; margin: 32px 0 0; padding: 32px; border: 1px solid var(--accent); border-radius: var(--rayon); }
+.deblocage h3 { font-size: 26px; margin-bottom: 8px; }
+.deblocage > p:not(.alerte) { color: var(--gris-clair); max-width: 62ch; margin-bottom: 22px; }
+
+.offre h2 { margin-bottom: 28px; }
+.offre-choix { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--trait); border-radius: var(--rayon); }
+.offre-carte { display: flex; flex-direction: column; gap: 8px; background: none; border: 0; border-radius: 0; padding: 32px; }
+.offre-carte + .offre-carte { border-left: 1px solid var(--trait); }
+.offre-carte h3 { font-size: 24px; margin: 0; }
+.offre-carte p { margin: 0; color: var(--gris-clair); }
+.offre-carte .prix { font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.offre-carte p:last-of-type { margin-bottom: 26px; }
+.offre-carte .bouton { margin-top: auto; align-self: flex-start; }
+.offre-signature { display: flex; align-items: center; gap: 12px; margin: 20px 0 0; font-size: 15px; color: var(--gris); }
+.offre-signature img { border-radius: 50%; object-fit: cover; }
+
+.points-forts { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--trait); }
+.points-forts li { padding: 14px 0; border-bottom: 1px solid var(--trait); color: var(--gris-clair); }
+
+.detail details { border-top: 1px solid var(--trait); }
+.detail details:last-of-type { border-bottom: 1px solid var(--trait); }
+.detail summary { cursor: pointer; list-style: none; padding: 20px 0; font-weight: 700; font-size: 19px; display: flex; justify-content: space-between; }
+.detail summary::-webkit-details-marker { display: none; }
+.detail summary::after { content: "Ouvrir"; font-weight: 500; font-size: 15px; color: var(--gris); }
+.detail details[open] summary::after { content: "Fermer"; }
+.detail table { width: 100%; border-collapse: collapse; font-size: 16px; margin-bottom: 16px; }
+.detail th, .detail td { text-align: left; vertical-align: top; padding: 12px 16px 12px 0; border-top: 1px solid var(--trait); }
+.detail th { font-size: 14px; color: var(--gris); font-weight: 500; }
+.detail td { color: var(--gris-clair); }
+.detail td:first-child { width: 28%; color: var(--texte); }
+.detail td:nth-child(2) { width: 150px; }
+.detail em { color: var(--gris); font-style: normal; display: block; margin-top: 4px; }
+
+/* --- Rendez-vous ------------------------------------------------------------- */
+.hero-court { padding-top: 80px; }
+.hero-court .formulaire { margin-top: 40px; }
+.attente { font-size: 14px; color: var(--gris); margin: 14px 0 0; }
+.actions { margin-top: 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
+
+/* --- Pages de texte ---------------------------------------------------------- */
+.page-texte { max-width: 740px; padding-top: 72px; }
+.page-texte h1 { font-size: clamp(40px, 5.4vw, 60px); }
+.page-texte h2 { font-size: 23px; margin: 44px 0 10px; }
+.page-texte p, .page-texte li { color: var(--gris-clair); }
+.page-texte ul { padding-left: 20px; }
+.page-texte li { margin-bottom: 8px; }
+.chapo-texte { font-size: 20px; }
+.tableau-texte { width: 100%; border-collapse: collapse; font-size: 16px; }
+.tableau-texte th, .tableau-texte td { text-align: left; vertical-align: top; padding: 12px 14px 12px 0; border-top: 1px solid var(--trait); }
+.tableau-texte th { font-size: 14px; color: var(--gris); font-weight: 500; }
+.tableau-texte td { color: var(--gris-clair); }
+
+/* --- Réalisations ------------------------------------------------------------ */
+.entete-real { padding-top: 96px; max-width: 800px; }
+.chapo-real { font-size: clamp(20px, 2.2vw, 23px); line-height: 1.45; color: var(--gris-clair); margin: 0; }
+.projet { margin-top: 112px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 56px; align-items: start; padding-top: 32px; border-top: 1px solid var(--trait); }
+.ecrans { position: relative; margin: 0 0 40px; }
+.ecran-bureau { display: block; border: 1px solid var(--trait); border-radius: var(--rayon); overflow: hidden; }
+.ecran-bureau img { display: block; width: 100%; height: auto; }
+.ecran-mobile { position: absolute; right: -12px; bottom: -40px; width: 24%; height: auto; border: 4px solid var(--fond); outline: 1px solid var(--trait-fort); border-radius: 6px; }
+.projet-type { margin: 0 0 12px; font-size: 15px; font-weight: 600; color: var(--accent); }
+.projet h2 { margin: 0 0 16px; font-size: clamp(25px, 2.6vw, 31px); line-height: 1.15; }
+.projet-texte > p { color: var(--gris-clair); }
+.projet-fait { margin: 0 0 18px; padding: 0; list-style: none; border-top: 1px solid var(--trait); }
+.projet-fait li { padding: 9px 0; border-bottom: 1px solid var(--trait); color: var(--gris-clair); font-size: 16px; }
+.projet-outils { font-size: 15px; color: var(--gris) !important; }
+.appel-real { margin-top: 128px; padding: 48px; border: 1px solid var(--accent); }
+.appel-real h2 { margin: 0 0 10px; }
+.appel-real p { margin: 0 0 28px; color: var(--gris-clair); max-width: 44ch; font-size: 20px; }
+
+/* --- Mobile ------------------------------------------------------------------ */
+@media (max-width: 760px) {
+  body { font-size: 17px; }
+  main { padding: 0 18px 88px; }
+  .bandeau { padding: 16px 18px; }
+  .marque small, .lien-imprimer { display: none; }
+  h2 { margin-top: 80px; }
+  .hero { padding-top: 56px; }
+  .ligne-url { flex-direction: column; border: 0; background: none; }
+  .ligne-url input { border: 1px solid var(--trait-fort) !important; background: var(--champ) !important; }
+  .ligne-url button[type=submit] { width: 100%; margin-top: 10px; border-radius: var(--rayon); }
+  .champs { grid-template-columns: 1fr; }
+  .grille li { grid-template-columns: 1fr; gap: 8px; padding: 22px 0; }
+  .auteur { grid-template-columns: 1fr; gap: 24px; margin-top: 80px; padding: 24px; }
+  .auteur-visuel img, .initiales:not(.petite) { width: 112px; height: 112px; font-size: 38px; }
+  .entete-rapport { grid-template-columns: 1fr; gap: 24px; padding-top: 48px; }
+  .jauge { width: 140px; height: 140px; }
+  .jauge-chiffre { font-size: 46px; }
+  .categories { grid-template-columns: 1fr; }
+  .categorie { grid-template-columns: 130px 1fr 34px; }
+  .priorite p { margin-left: 0; }
+  .priorite-tete { flex-wrap: wrap; gap: 6px 14px; }
+  .priorite-tete .pastille { flex-basis: 100%; padding-left: 46px; }
+  .deblocage { padding: 22px; }
+  .offre-choix { grid-template-columns: 1fr; }
+  .offre-carte { padding: 24px; }
+  .offre-carte + .offre-carte { border-left: 0; border-top: 1px solid var(--trait); }
+  .offre-carte .bouton { align-self: stretch; }
+  .detail table, .detail tbody, .detail tr, .detail td { display: block; width: 100% !important; }
+  .detail thead { display: none; }
+  .detail td { border-top: 0; padding: 3px 0; }
+  .detail tr { border-top: 1px solid var(--trait); padding: 12px 0; }
+  .tableau-texte thead { display: none; }
+  .tableau-texte tr, .tableau-texte td { display: block; }
+  .tableau-texte td { border: 0; padding: 2px 0; }
+  .tableau-texte tr { border-top: 1px solid var(--trait); padding: 12px 0; }
+  .projet { grid-template-columns: 1fr; gap: 28px; margin-top: 80px; }
+  .ecran-mobile { right: -4px; width: 26%; }
+  .appel-real { padding: 28px 22px; }
+  .appel-real .bouton { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media print {
+  :root { --fond: #fff; --surface: #fff; --surface-2: #f2f2f0; --trait: #cfd3d1; --texte: #1c2326; --gris: #5d6663; --gris-clair: #3a4245; }
+  body { background: #fff; color: #1c2326; font-size: 11pt; }
+  .lien-imprimer, .offre, .deblocage, .pied nav { display: none; }
+  .detail details:not([open]) > *:not(summary) { display: block; }
+}
+
+/* --- Mise en page centrée et barres arrondies (préférence de Simon) ------------ */
+.hero { text-align: center; }
+.hero h1 { margin-left: auto; margin-right: auto; }
+.hero .chapo { margin: 0 auto; }
+.hero .formulaire { margin-left: auto; margin-right: auto; text-align: left; }
+.rassurance, .compteur { text-align: center; }
+.controles h2, .faq > h2, .avis h2, .offre h2, #priorites > h2, .points-forts-titre,
+.detail > h2, main > section > h2 { text-align: center; margin-left: auto; margin-right: auto; }
+.controles h2 { max-width: 28ch; }
+.faq { margin-left: auto; margin-right: auto; }
+.entete-real { margin-left: auto; margin-right: auto; text-align: center; }
+.chapo-real { margin: 0 auto; max-width: 46ch; }
+.appel-real { text-align: center; }
+.appel-real p { margin-left: auto; margin-right: auto; }
+.page-texte { margin-left: auto; margin-right: auto; }
+
+.progression ol::before { height: 6px; border-radius: 999px; margin-bottom: 10px; }
+.barre, .barre-valeur { border-radius: 999px; }
+.barre { height: 6px; }
+.entete-rapport { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 28px; }
+.entete-rapport .chapo { margin: 0 auto; }
+@media (max-width: 760px) { .controles h2 { max-width: none; } }

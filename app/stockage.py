@@ -70,18 +70,38 @@ def hacher_ip(ip: str) -> str:
     return hashlib.sha256((sel + ip).encode()).hexdigest()[:32]
 
 
-def quota_depasse(email: str, ip: str) -> str | None:
+def quota_ip(ip: str) -> str | None:
+    """Limite le nombre d'analyses lancées depuis une même connexion."""
     depuis = (datetime.now(timezone.utc) - FENETRE).isoformat()
     with connexion() as con:
-        nb_email = con.execute("SELECT COUNT(*) FROM audits WHERE email = ? AND cree_le > ?",
-                               (email, depuis)).fetchone()[0]
-        nb_ip = con.execute("SELECT COUNT(*) FROM audits WHERE ip_hash = ? AND cree_le > ?",
-                            (hacher_ip(ip), depuis)).fetchone()[0]
-    if nb_email >= LIMITE_PAR_EMAIL:
-        return f"Vous avez déjà demandé {nb_email} audits aujourd'hui. Revenez demain ou contactez-nous directement."
-    if nb_ip >= LIMITE_PAR_IP:
-        return "Trop d'audits ont été demandés depuis votre connexion aujourd'hui. Réessayez demain."
+        nb = con.execute("SELECT COUNT(*) FROM audits WHERE ip_hash = ? AND cree_le > ?",
+                         (hacher_ip(ip), depuis)).fetchone()[0]
+    if nb >= LIMITE_PAR_IP:
+        return "Trop d'analyses ont été lancées depuis votre connexion aujourd'hui. Réessayez demain."
     return None
+
+
+def quota_email(email: str) -> str | None:
+    """Limite le nombre de rapports envoyés à une même adresse."""
+    depuis = (datetime.now(timezone.utc) - FENETRE).isoformat()
+    with connexion() as con:
+        nb = con.execute("SELECT COUNT(*) FROM audits WHERE email = ? AND cree_le > ?",
+                         (email, depuis)).fetchone()[0]
+    if nb >= LIMITE_PAR_EMAIL:
+        return f"Vous avez déjà reçu {nb} rapports aujourd'hui. Revenez demain ou écrivez-moi directement."
+    return None
+
+
+def associer_email(ident: str, email: str) -> bool:
+    """Débloque le rapport complet. Ne remplace jamais un email déjà enregistré."""
+    with connexion() as con:
+        cur = con.execute("UPDATE audits SET email = ? WHERE id = ? AND email = ''", (email, ident))
+        return cur.rowcount == 1
+
+
+def nombre_audits() -> int:
+    with connexion() as con:
+        return con.execute("SELECT COUNT(*) FROM audits").fetchone()[0]
 
 
 def enregistrer(url: str, email: str, ip: str, audit: dict, rapport: dict) -> str:

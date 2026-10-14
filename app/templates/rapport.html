@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block titre %}Rapport d'audit · {{ audit.url_finale }}{% endblock %}
 {% block tete %}<meta name="robots" content="noindex">{% endblock %}
-{% block bandeau %}<button class="lien-imprimer" onclick="window.print()">Imprimer ou enregistrer en PDF</button>{% endblock %}
+{% block bandeau %}{% if debloque %}<button class="lien-imprimer" onclick="window.print()">Imprimer ou enregistrer en PDF</button>{% endif %}{% endblock %}
 {% block contenu %}
 {% set s = audit.score %}
 {% set niveau = 'bon' if s >= 80 else ('moyen' if s >= 55 else 'faible') %}
@@ -11,15 +11,15 @@
     <svg viewBox="0 0 120 120" aria-hidden="true">
       <circle cx="60" cy="60" r="52" class="jauge-fond"/>
       <circle cx="60" cy="60" r="52" class="jauge-valeur" pathLength="100"
-              stroke-dasharray="{{ s }} 100" transform="rotate(-90 60 60)"/>
+              stroke-dasharray="{{ s }} 100" style="--score: {{ s }}" transform="rotate(-90 60 60)"/>
     </svg>
     <span class="jauge-chiffre">{{ s }}<small>/100</small></span>
   </div>
   <div>
-    <p class="surtitre">Audit du {{ audit.date[:10] }}</p>
+    <p class="surtitre">Audit du {{ audit.date[8:10] }}/{{ audit.date[5:7] }}/{{ audit.date[:4] }}</p>
     <h1 class="url-site">{{ audit.url_finale }}</h1>
     <p class="chapo">{{ rapport.resume }}</p>
-    {% if email_envoye %}<p class="note">Une copie de ce rapport vous a été envoyée par email.</p>{% endif %}
+    {% if debloque and email_envoye %}<p class="note">Une copie de ce rapport vous a été envoyée par email.</p>{% endif %}
   </div>
 </section>
 
@@ -35,8 +35,9 @@
 </section>
 
 {% if rapport.priorites %}
-<section>
+<section id="priorites">
   <h2>Vos {{ rapport.priorites|length }} priorités</h2>
+  {% if debloque %}
   <ol class="priorites">
     {% for p in rapport.priorites %}
     <li class="carte priorite">
@@ -50,17 +51,64 @@
     </li>
     {% endfor %}
   </ol>
+  {% else %}
+  <ol class="priorites priorites-apercu">
+    {% for p in rapport.priorites %}
+    <li class="carte priorite">
+      <div class="priorite-tete">
+        <span class="numero">{{ loop.index }}</span>
+        <h3>{{ p.titre }}</h3>
+        <span class="pastille pastille-{{ p.statut }}">{{ libelles[p.statut] }}</span>
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+
+  <form class="formulaire deblocage" method="post" action="/rapport/{{ ident }}/email">
+    <h3>Recevez le rapport complet</h3>
+    <p>Pour chaque priorité&nbsp;: pourquoi elle compte pour vos clients et comment la corriger. Plus le détail des {{ audit.resultats|length }} contrôles. Envoyé par email et affiché ici.</p>
+    {% if erreur %}<p class="alerte" role="alert">{{ erreur }}</p>{% endif %}
+    <div class="ligne-url">
+      <label class="visuellement-cache" for="email">Votre email</label>
+      <input id="email" name="email" type="email" placeholder="vous@monentreprise.fr" value="{{ email_saisi or '' }}" required autocomplete="email">
+      <button type="submit">Recevoir le rapport</button>
+    </div>
+    <div class="piege" aria-hidden="true">
+      <label for="site_web">Ne pas remplir</label>
+      <input id="site_web" name="site_web" type="text" tabindex="-1" autocomplete="off">
+    </div>
+    <label class="case">
+      <input type="checkbox" name="consentement" value="oui" required>
+      <span>J'accepte de recevoir mon rapport par email et d'être recontacté à son sujet. Pas de newsletter, pas de revente. <a href="/confidentialite">En savoir plus</a></span>
+    </label>
+  </form>
+  {% endif %}
 </section>
 {% endif %}
 
-<section class="carte appel">
-  <div>
-    <h2>Besoin d'aide pour corriger ces points&nbsp;?</h2>
-    <p>On en parle 20 minutes, gratuitement : je vous dis ce qui est rapide à corriger vous-même et ce qui demande un développeur.</p>
+<section class="offre" aria-labelledby="titre-offre">
+  <h2 id="titre-offre">Et maintenant&nbsp;?</h2>
+  <div class="offre-choix">
+    <div class="carte offre-carte offre-principale">
+      <h3>Je corrige ces points pour vous</h3>
+      <p class="prix">{% if offre_prix %}À partir de {{ offre_prix }}{% else %}Devis gratuit, sans engagement{% endif %}</p>
+      <p>Je m'occupe des corrections, puis je vous montre le résultat avec un nouvel audit.</p>
+      <a class="bouton" href="/rendez-vous/{{ ident }}?offre=correction">Demander un devis</a>
+    </div>
+    <div class="carte offre-carte">
+      <h3>On lit le rapport ensemble</h3>
+      <p class="prix">20 minutes au téléphone, offertes</p>
+      <p>Je vous dis ce que vous pouvez corriger vous-même et ce qui demande un développeur.</p>
+      <a class="bouton bouton-secondaire" href="/rendez-vous/{{ ident }}">Réserver l'appel</a>
+    </div>
   </div>
-  <a class="bouton" href="/rendez-vous/{{ ident }}">Prendre rendez-vous</a>
+  <p class="offre-signature">
+    {% if photo %}<img src="{{ photo }}" alt="" width="40" height="40">{% else %}<span class="initiales petite" aria-hidden="true">SD</span>{% endif %}
+    <span>Simon Delrue, {{ titre_pro|replace("Développeur", "développeur") }}, Lille.{% if lien_realisations %} <a href="{{ lien_realisations }}">Mes réalisations</a>{% endif %}</span>
+  </p>
 </section>
 
+{% if debloque %}
 {% if rapport.points_forts %}
 <section>
   <h2>Ce qui fonctionne déjà</h2>
@@ -91,4 +139,5 @@
   {% endfor %}
   <p class="note">Analyse automatique de la page d'accueil et de ses liens. Elle ne remplace pas un audit complet, mais elle repère l'essentiel.{% if not rapport.redige_par_ia %} Rapport généré sans rédaction IA.{% endif %}</p>
 </section>
+{% endif %}
 {% endblock %}

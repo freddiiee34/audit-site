@@ -40,5 +40,5 @@ def environnement(monkeypatch, tmp_path):
     monkeypatch.setenv("AUDIT_ALLOW_PRIVATE", "1")
     monkeypatch.setenv("AUDIT_DB", str(tmp_path / "test.db"))
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    for var in ("BREVO_API_KEY", "EXPEDITEUR_EMAIL", "NOTIF_EMAIL", "URL_PUBLIQUE", "LIEN_AGENDA"):
+    for var in ("BREVO_API_KEY", "EXPEDITEUR_EMAIL", "NOTIF_EMAIL", "URL_PUBLIQUE", "LIEN_AGENDA", "THEME", "OFFRE_PRIX", "LIEN_REALISATIONS", "EDITEUR_SIRET", "CONTACT_EMAIL"):
         monkeypatch.delenv(var, raising=False)

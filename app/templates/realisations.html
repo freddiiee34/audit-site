@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titre %}Réalisations · Simon Delrue, développeur web & IA à Lille{% endblock %}
+{% block description %}Landing pages et emailings réalisés par Simon Delrue, développeur web & IA à Lille : intégration responsive, emailings compatibles Outlook, pages événementielles.{% endblock %}
+{% block tete %}{% if url_publique %}<link rel="canonical" href="{{ url_publique }}/realisations">{% endif %}{% endblock %}
+{% block bandeau %}<a class="lien-bandeau" href="/">Auditer mon site</a>{% endblock %}
+{% block contenu %}
+<section class="entete-real">
+  <h1>Réalisations</h1>
+  <p class="chapo-real">Des landing pages et des emailings réalisés en agence, entre 2021 et 2025, pour de grandes marques. Chaque page s'affiche aussi bien sur ordinateur que sur téléphone.</p>
+</section>
+
+{% for p in projets %}
+<article class="projet">
+  <figure class="ecrans">
+    <a class="ecran-bureau" href="/static/realisations/{{ p.cle }}-complet.webp" aria-label="Voir la page entière : {{ p.titre }}">
+      <img src="/static/realisations/{{ p.cle }}-bureau.webp" alt="{{ p.titre }}, version ordinateur" width="1200" height="750" loading="{{ 'eager' if loop.first else 'lazy' }}">
+    </a>
+    <img class="ecran-mobile" src="/static/realisations/{{ p.cle }}-mobile.webp" alt="{{ p.titre }}, version mobile" width="360" height="720" loading="lazy">
+  </figure>
+  <div class="projet-texte">
+    <p class="projet-type">{{ p.type }}, réalisé en agence</p>
+    <h2>{{ p.titre }}</h2>
+    <p>{{ p.contexte }}</p>
+    <ul class="projet-fait">
+      {% for f in p.fait %}<li>{{ f }}</li>{% endfor %}
+    </ul>
+    <p class="projet-outils">{{ p.outils|join(", ") }}</p>
+    <a href="/static/realisations/{{ p.cle }}-complet.webp">Voir la page entière</a>
+  </div>
+</article>
+{% endfor %}
+
+<section class="carte appel-real">
+  <h2>Et votre site&nbsp;?</h2>
+  <p>Commencez par l'audit gratuit&nbsp;: en une minute, vous savez ce qui freine votre site.</p>
+  <a class="bouton" href="/">Lancer l'audit gratuit</a>
+</section>
+{% endblock %}

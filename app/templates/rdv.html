@@ -12,11 +12,17 @@
       <a class="lien-secondaire" href="/rapport/{{ ident }}">Revenir au rapport</a>
     </div>
   {% else %}
-    <p class="surtitre">Échange gratuit de 20 minutes</p>
+    {% if offre %}
+    <p class="surtitre">Devis gratuit, sans engagement</p>
+    <h1>Je corrige votre site.</h1>
+    <p class="chapo">Laissez-moi vos coordonnées&nbsp;: je reprends votre audit ({{ audit.score }}/100) et je vous envoie un devis pour corriger les points relevés.</p>
+    {% else %}
+    <p class="surtitre">Appel offert de 20 minutes</p>
     <h1>Parlons de votre site.</h1>
-    <p class="chapo">On passe en revue votre audit ({{ audit.score }}/100) : ce que vous pouvez corriger vous-même, et ce qui demande un développeur.</p>
+    <p class="chapo">On passe en revue votre audit ({{ audit.score }}/100)&nbsp;: ce que vous pouvez corriger vous-même, et ce qui demande un développeur.</p>
+    {% endif %}
 
-    <form class="formulaire" method="post" action="/rendez-vous/{{ ident }}">
+    <form class="formulaire" method="post" action="/rendez-vous/{{ ident }}{% if offre %}?offre=correction{% endif %}">
       {% if erreur %}<p class="alerte" role="alert">{{ erreur }}</p>{% endif %}
       <div class="champs">
         <div class="champ">
@@ -48,7 +54,7 @@
         <label for="site_web">Ne pas remplir</label>
         <input id="site_web" name="site_web" type="text" tabindex="-1" autocomplete="off">
       </div>
-      <button type="submit">Demander un rendez-vous</button>
+      <button type="submit">{% if offre %}Demander mon devis{% else %}Demander un rendez-vous{% endif %}</button>
       <p class="attente">Pour le site {{ audit.url_finale }}. Vos coordonnées servent uniquement à vous recontacter.</p>
     </form>
   {% endif %}

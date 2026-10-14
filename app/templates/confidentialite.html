@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titre %}Politique de confidentialité · Simon Delrue{% endblock %}
+{% block tete %}{% if url_publique %}<link rel="canonical" href="{{ url_publique }}/confidentialite">{% endif %}{% endblock %}
+{% block contenu %}
+<article class="page-texte">
+  <h1>Politique de confidentialité</h1>
+  <p class="chapo-texte">En bref&nbsp;: je collecte le minimum, je ne revends rien, et vous pouvez tout faire supprimer sur simple demande.</p>
+
+  <h2>Qui est responsable de vos données</h2>
+  <p>{{ editeur.nom }}, {{ editeur.statut|lower }}{% if editeur.email %}, joignable à <a href="mailto:{{ editeur.email }}">{{ editeur.email }}</a>{% endif %}. Détails dans les <a href="/mentions-legales">mentions légales</a>.</p>
+
+  <h2>Ce qui est collecté, et pourquoi</h2>
+  <table class="tableau-texte">
+    <thead><tr><th scope="col">Donnée</th><th scope="col">À quoi elle sert</th><th scope="col">Base légale</th></tr></thead>
+    <tbody>
+      <tr><td>L'adresse du site analysé et le résultat de l'analyse</td><td>Produire et afficher votre rapport</td><td>Votre demande</td></tr>
+      <tr><td>Votre adresse IP, uniquement sous forme chiffrée (hachée)</td><td>Limiter les abus (nombre d'analyses par jour)</td><td>Intérêt légitime</td></tr>
+      <tr><td>Votre email, si vous demandez le rapport complet</td><td>Vous envoyer le rapport et vous recontacter à son sujet</td><td>Votre consentement</td></tr>
+      <tr><td>Nom, entreprise, téléphone, disponibilités, message, si vous demandez un rendez-vous ou un devis</td><td>Vous rappeler et préparer l'échange</td><td>Votre demande</td></tr>
+    </tbody>
+  </table>
+  <p>Pas de newsletter, pas de revente, pas de publicité. Ce site ne dépose aucun cookie et ne charge aucun outil de mesure d'audience ni aucune police externe.</p>
+
+  <h2>Qui y a accès</h2>
+  <p>Moi seul, avec l'aide de trois prestataires techniques&nbsp;:</p>
+  <ul>
+    <li><strong>OVH</strong> héberge le site et la base de données, dans un centre de données en Union européenne.</li>
+    <li><strong>Brevo</strong> (France) envoie les emails.</li>
+    <li><strong>Anthropic</strong> (États-Unis) rédige le texte du rapport à partir des constats techniques sur le site analysé. Aucune donnée personnelle ne lui est transmise&nbsp;: ni email, ni nom, ni adresse IP.</li>
+  </ul>
+
+  <h2>Combien de temps</h2>
+  <p>Les données sont conservées au plus 3&nbsp;ans après notre dernier échange, puis supprimées. Vous pouvez demander leur suppression avant, à tout moment.</p>
+
+  <h2>Vos droits</h2>
+  <p>Vous pouvez accéder à vos données, les corriger, les faire supprimer, vous opposer à leur utilisation ou retirer votre consentement{% if editeur.email %} en écrivant à <a href="mailto:{{ editeur.email }}">{{ editeur.email }}</a>{% endif %}. Je réponds sous un mois au plus. Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la <a href="https://www.cnil.fr/fr/plaintes">CNIL</a>.</p>
+</article>
+{% endblock %}

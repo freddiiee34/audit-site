@@ -1,22 +1,27 @@
 {% extends "base.html" %}
-{% block titre %}Audit gratuit de votre site · {{ nom_service }}{% endblock %}
+{% block titre %}Audit gratuit de site internet en 1 minute · Simon Delrue, Lille{% endblock %}
+{% block tete %}
+  {% if url_publique %}<link rel="canonical" href="{{ url_publique }}/">{% endif %}
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:title" content="Votre site vous fait-il perdre des clients ? Audit gratuit en 1 minute">
+  <meta property="og:description" content="Vitesse, Google, mobile, sécurité, obligations légales : un score immédiat et les 5 priorités à corriger, sans jargon.">
+  {% if url_publique %}<meta property="og:url" content="{{ url_publique }}/">
+  <meta property="og:image" content="{{ url_publique }}/static/apercu.png">{% endif %}
+  <meta name="twitter:card" content="summary_large_image">
+{% endblock %}
 {% block contenu %}
 <section class="hero">
-  <p class="surtitre">Audit gratuit. Résultat en une minute.</p>
+  <p class="surtitre">Audit gratuit, résultat en une minute</p>
   <h1>Votre site vous fait&#8209;il perdre des clients&nbsp;?</h1>
-  <p class="chapo">Entrez son adresse. Vous recevez un rapport clair, sans jargon, avec les 5 choses à corriger en priorité.</p>
+  <p class="chapo">Entrez son adresse&nbsp;: votre score s'affiche tout de suite, sans email. Ensuite, si vous le souhaitez, vous recevez les 5&nbsp;choses à corriger en priorité.</p>
 
   <form class="formulaire" method="post" action="/audit" id="form-audit">
     {% if erreur %}<p class="alerte" role="alert">{{ erreur }}</p>{% endif %}
-    <div class="champs">
-      <div class="champ">
-        <label for="url">Adresse de votre site</label>
-        <input id="url" name="url" type="text" inputmode="url" placeholder="www.monentreprise.fr" value="{{ url or '' }}" required autocomplete="url">
-      </div>
-      <div class="champ">
-        <label for="email">Votre email</label>
-        <input id="email" name="email" type="email" placeholder="vous@monentreprise.fr" value="{{ email or '' }}" required autocomplete="email">
-      </div>
+    <div class="ligne-url">
+      <label class="visuellement-cache" for="url">Adresse de votre site</label>
+      <input id="url" name="url" type="text" inputmode="url" placeholder="www.monentreprise.fr" value="{{ url or '' }}" required autocomplete="url" autocapitalize="off" spellcheck="false">
+      <button type="submit" id="bouton">Analyser mon site</button>
     </div>
 
     <div class="piege" aria-hidden="true">
@@ -24,34 +29,104 @@
       <input id="site_web" name="site_web" type="text" tabindex="-1" autocomplete="off">
     </div>
 
-    <label class="case">
-      <input type="checkbox" name="consentement" value="oui" required>
-      <span>J'accepte de recevoir mon rapport par email et d'être recontacté à son sujet. Pas de newsletter, pas de revente.</span>
-    </label>
+    <p class="rassurance">Gratuit, sans inscription. L'outil lit votre page d'accueil comme le ferait un visiteur&nbsp;: il ne modifie rien.</p>
 
-    <button type="submit" id="bouton">Analyser mon site</button>
-    <p class="attente" id="attente" hidden>Analyse en cours. Cela prend 20 à 40 secondes.</p>
+    <div class="progression" id="progression" hidden>
+      <p class="progression-titre" role="status">Analyse de <strong id="site-analyse"></strong></p>
+      <ol>
+        <li>Ouverture de votre site</li>
+        <li>Mesure de la vitesse</li>
+        <li>Ce que voit Google</li>
+        <li>Affichage sur téléphone</li>
+        <li>Sécurité et obligations légales</li>
+        <li>Rédaction de votre rapport</li>
+      </ol>
+      <p class="note">Cela prend 20 à 40&nbsp;secondes. Ne fermez pas la page.</p>
+    </div>
   </form>
+  {% if nb_audits %}<p class="compteur">{{ "{:,}".format(nb_audits).replace(",", "&#8239;")|safe }} sites déjà analysés</p>{% endif %}
 </section>
 
 <section class="controles">
-  <h2>Six points vérifiés.<br><span class="gris">Expliqués simplement.</span></h2>
+  <h2>Ce que l'audit vérifie.<br><span class="gris">Et pourquoi ça vous coûte des clients.</span></h2>
   <ul class="grille">
-    <li><strong>Vitesse</strong><span>Temps de réponse, poids de la page, fichiers chargés.</span></li>
-    <li><strong>Référencement Google</strong><span>Titre, description, sitemap, liens cassés, visibilité.</span></li>
-    <li><strong>Mobile</strong><span>Affichage correct sur téléphone.</span></li>
-    <li><strong>Sécurité</strong><span>HTTPS et redirections.</span></li>
-    <li><strong>Obligations légales</strong><span>Mentions légales, confidentialité, bandeau cookies.</span></li>
-    <li><strong>Accessibilité</strong><span>Images décrites, formulaires lisibles.</span></li>
+    <li><strong>Vos visiteurs partent si la page met plus de 3&nbsp;secondes.</strong><span>Vitesse&nbsp;: temps de réponse du serveur, poids de la page, nombre de fichiers chargés.</span></li>
+    <li><strong>Vos clients vous cherchent sur Google. Vous trouvent&#8209;ils&nbsp;?</strong><span>Référencement&nbsp;: titre et description, sitemap, liens cassés, page autorisée dans Google.</span></li>
+    <li><strong>Plus d'un visiteur sur deux arrive depuis un téléphone.</strong><span>Mobile&nbsp;: la page s'adapte-t-elle à un petit écran&nbsp;?</span></li>
+    <li><strong>Sans HTTPS, Chrome affiche «&nbsp;Non sécurisé&nbsp;» à vos visiteurs.</strong><span>Sécurité&nbsp;: certificat HTTPS et redirections.</span></li>
+    <li><strong>Des mentions légales absentes exposent à une amende.</strong><span>Obligations légales&nbsp;: mentions légales, politique de confidentialité, bandeau cookies.</span></li>
+    <li><strong>Un client qui n'arrive pas à lire votre site ne vous appelle pas.</strong><span>Accessibilité&nbsp;: images décrites, formulaires utilisables par tous.</span></li>
   </ul>
 </section>
 
+<section class="auteur">
+  <div class="auteur-visuel">
+    {% if photo %}<img src="{{ photo }}" alt="Simon Delrue" width="160" height="160">{% else %}<span class="initiales" aria-hidden="true">SD</span>{% endif %}
+  </div>
+  <div>
+    <p class="surtitre">Qui est derrière l'outil</p>
+    <h2>Simon Delrue</h2>
+    <p class="role">{{ titre_pro }}, à Lille</p>
+    <p>Pendant cinq ans en agence, j'ai construit des sites, des landing pages et des campagnes emailing pour des entreprises de la région. Je suis aujourd'hui indépendant et j'aide les PME à tirer parti du web et de l'IA.</p>
+    <p>J'ai construit cet outil parce que la plupart des gérants ne savent pas ce qui freine leur site. En une minute, vous savez ce qui compte vraiment, sans jargon.</p>
+    <p class="auteur-liens">
+      {% if lien_realisations %}<a href="{{ lien_realisations }}">Voir mes réalisations</a>{% endif %}
+      {% if lien_linkedin %}<a href="{{ lien_linkedin }}">LinkedIn</a>{% endif %}
+    </p>
+  </div>
+</section>
+
+{% if avis %}
+<section class="avis">
+  <h2>Ils m'ont fait confiance.</h2>
+  <ul>
+    {% for a in avis %}
+    <li><blockquote><p>{{ a.texte }}</p></blockquote><p class="avis-auteur">{{ a.auteur }}{% if a.entreprise %}, {{ a.entreprise }}{% endif %}</p></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="faq">
+  <h2>Questions fréquentes</h2>
+  <details>
+    <summary>C'est vraiment gratuit&nbsp;?</summary>
+    <p>Oui. Pas de carte bancaire, pas d'abonnement, pas d'inscription. Si vous voulez de l'aide pour corriger les points relevés, je vous fais un devis, sans engagement. Sinon, le rapport reste à vous.</p>
+  </details>
+  <details>
+    <summary>Que faites-vous de mon email&nbsp;?</summary>
+    <p>Il sert à vous envoyer le rapport et, si vous le souhaitez, à en reparler. Pas de newsletter, pas de revente. Vous pouvez demander sa suppression à tout moment. Le détail est dans la <a href="/confidentialite">politique de confidentialité</a>.</p>
+  </details>
+  <details>
+    <summary>Et si je n'y connais rien&nbsp;?</summary>
+    <p>Le rapport est écrit pour des gérants&nbsp;: chaque point dit pourquoi il compte et quoi faire, en langage courant. Et si vous préférez, on le lit ensemble lors d'un appel de 20&nbsp;minutes offert.</p>
+  </details>
+  <details>
+    <summary>L'analyse peut-elle abîmer mon site&nbsp;?</summary>
+    <p>Non. L'outil consulte votre page d'accueil publique, exactement comme un visiteur. Il ne se connecte à rien et ne modifie rien.</p>
+  </details>
+</section>
+
 <script>
-  document.getElementById("form-audit").addEventListener("submit", function () {
-    var b = document.getElementById("bouton");
-    b.disabled = true;
-    b.textContent = "Analyse en cours…";
-    document.getElementById("attente").hidden = false;
-  });
+  (function () {
+    var form = document.getElementById("form-audit");
+    form.addEventListener("submit", function () {
+      var bouton = document.getElementById("bouton");
+      var bloc = document.getElementById("progression");
+      var etapes = bloc.querySelectorAll("li");
+      bouton.disabled = true;
+      bouton.textContent = "Analyse en cours…";
+      document.getElementById("site-analyse").textContent = document.getElementById("url").value.trim();
+      bloc.hidden = false;
+      // Les étapes avancent au rythme moyen d'une analyse ; la dernière attend la réponse du serveur.
+      var i = 0;
+      function suivante() {
+        if (i > 0) etapes[i - 1].className = "fait";
+        if (i < etapes.length) { etapes[i].className = "en-cours"; i++; }
+        if (i < etapes.length) setTimeout(suivante, 3500 + Math.random() * 1500);
+      }
+      suivante();
+    });
+  })();
 </script>
 {% endblock %}

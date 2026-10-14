@@ -17,9 +17,10 @@ Chaque contrôle produit un constat mesuré, un enjeu (ce que ça coûte à l'en
 
 ## Le parcours et les emails
 
-1. Le visiteur lance un audit : il reçoit son **rapport par email**, et toi une **alerte « nouvel audit »** (site, email, score, lien du rapport).
-2. Depuis le rapport, le bouton **« Prendre rendez-vous »** ouvre un formulaire (nom, entreprise, email, téléphone, disponibilités, message).
-3. À l'envoi, tu reçois un email **« RDV demandé »** avec toutes ses infos et le lien de son rapport. Répondre à cet email écrit directement au prospect. Le visiteur reçoit une confirmation.
+1. Le visiteur entre l'adresse de son site, **sans email**. Pendant l'analyse, les étapes défilent à l'écran. Il voit tout de suite son **score**, les notes par catégorie et les titres de ses 5 priorités.
+2. Pour le **rapport complet** (pourquoi chaque point compte, comment le corriger, détail des contrôles), il donne son email : il reçoit le rapport par email, et toi une **alerte « nouvel audit »** (site, email, score, lien du rapport).
+3. Sous les priorités, deux offres : **« Je corrige ces points pour vous »** (devis, prix réglable avec `OFFRE_PRIX`) et **« On lit le rapport ensemble »** (appel de 20 minutes offert). Les deux ouvrent un formulaire (nom, entreprise, email, téléphone, disponibilités, message).
+4. À l'envoi, tu reçois un email **« RDV demandé »** avec toutes ses infos et le lien de son rapport. Répondre à cet email écrit directement au prospect. Le visiteur reçoit une confirmation.
 
 Toutes les demandes sont aussi enregistrées dans la base (table `rendez_vous`), même si l'envoi d'email échoue.
 
@@ -89,11 +90,33 @@ Les fois suivantes, il suffit de te placer dans le dossier, d'activer l'environn
 | `NOTIF_EMAIL` | Où tu reçois les alertes de nouvel audit et les demandes de RDV |
 | `URL_PUBLIQUE` | Adresse du site utilisée dans les liens des emails (ex. `https://audit.simondelrue.fr`) |
 | `LIEN_AGENDA` | Facultatif : lien Calendly ou Cal.com proposé après une demande de RDV |
-| `NOM_SERVICE`, `SIGNATURE` | Nom affiché et signature en pied de page |
+| `NOM_SERVICE`, `SIGNATURE` | Nom du service et signature en pied de page |
+| `THEME` | Vide : direction « contrôle technique » (`style-alt.css`). `classique` : première version (`style.css`) |
+| `TITRE_PRO` | Ton titre, affiché dans l'en-tête et le bloc « Qui est derrière l'outil » (défaut : `Développeur web & IA pour les PME`) |
+| `LIEN_REALISATIONS`, `LIEN_LINKEDIN` | Lien externe vers tes réalisations (défaut : la page `/realisations` du site) et ton LinkedIn (masqué si vide) |
+| `OFFRE_PRIX` | Prix d'appel de l'offre de correction, ex. `290 €`. Vide : « Devis gratuit, sans engagement » |
+| `EDITEUR_NOM`, `EDITEUR_STATUT`, `EDITEUR_SIRET`, `EDITEUR_ADRESSE`, `CONTACT_EMAIL`, `CONTACT_TELEPHONE` | Infos des mentions légales et de la politique de confidentialité. **SIRET et adresse sont obligatoires** pour un professionnel |
 | `AUDIT_DB` | Chemin de la base SQLite (défaut : `audits.db`) |
 | `AUDIT_SEL` | Sel pour hacher les adresses IP : **à changer** |
-| `AUDIT_LIMITE_EMAIL`, `AUDIT_LIMITE_IP` | Audits autorisés par 24 h (défaut : 3 et 10) |
+| `AUDIT_LIMITE_EMAIL`, `AUDIT_LIMITE_IP` | Rapports envoyés par email et analyses par connexion, par 24 h (défaut : 3 et 10) |
 | `DERRIERE_PROXY` | `1` si l'app tourne derrière un proxy (lit `X-Forwarded-For`) |
+
+### Tes réalisations
+
+La page `/realisations` présente tes projets. Pour en ajouter un : mets trois captures dans `app/static/realisations/` (`<nom>-bureau.webp` 1200 × 750, `<nom>-mobile.webp` 360 × 720, `<nom>-complet.webp` page entière) et ajoute une entrée dans la liste `REALISATIONS` de `app/main.py`.
+
+### Ta photo, tes avis clients
+
+- **Photo** : dépose-la dans `app/static/` sous le nom `simon.jpg` (ou `simon.webp`, `simon.png`), carrée, 400 × 400 px environ. Sans photo, tes initiales s'affichent.
+- **Avis** : ajoute-les dans `app/avis.json`, uniquement de vrais avis, avec l'accord des clients. Le bloc reste masqué tant que le fichier est vide :
+
+```json
+[
+  {"texte": "Simon a refait notre site en deux semaines, on reçoit enfin des demandes.", "auteur": "Marie Martin", "entreprise": "Boulangerie Martin"}
+]
+```
+
+- **Compteur** : « N sites déjà analysés » s'affiche tout seul à partir de 20 audits réels dans la base.
 
 ### Brancher Brevo (envoi des emails)
 
@@ -109,7 +132,9 @@ En cas de souci, les journaux de l'application affichent le message exact renvoy
 
 - **Anti-SSRF** : les adresses internes (localhost, réseaux privés, métadonnées cloud) sont refusées, y compris après une redirection.
 - **Anti-abus** : limite par email et par IP, champ piège invisible contre les robots.
-- **RGPD** : case de consentement obligatoire, IP stockée hachée (jamais en clair), pages de rapport en `noindex`.
+- **RGPD** : case de consentement obligatoire, IP stockée hachée (jamais en clair), pages de rapport en `noindex`, mentions légales et politique de confidentialité (`/mentions-legales`, `/confidentialite`).
+- **Aucune ressource tierce** : la police Inter est servie par l'application, pas par Google Fonts. La page ne dépose aucun cookie.
+- **Référencement de la page elle-même** : `robots.txt`, `sitemap.xml`, adresse canonique et aperçu pour les réseaux sociaux (`app/static/apercu.png`) à partir de `URL_PUBLIQUE`. L'outil, lancé sur sa propre page, obtient 100 dans toutes les catégories.
 - Les rapports sont accessibles par un lien non devinable (identifiant aléatoire de 32 caractères).
 
 ## Tests

@@ -40,9 +40,13 @@ def client():
 
 
 def lancer_audit(client, site, email="gerant@exemple.fr"):
-    rep = client.post("/audit", data={"url": site, "email": email, "consentement": "oui"}, follow_redirects=False)
+    """Analyse sans email, puis déblocage du rapport complet avec l'email."""
+    rep = client.post("/audit", data={"url": site}, follow_redirects=False)
     assert rep.status_code == 303
-    return rep.headers["location"].rsplit("/", 1)[-1]
+    ident = rep.headers["location"].rsplit("/", 1)[-1]
+    rep = client.post(f"/rapport/{ident}/email", data={"email": email, "consentement": "oui"}, follow_redirects=False)
+    assert rep.status_code == 303
+    return ident
 
 
 RDV = {"nom": "Marie Martin", "entreprise": "Boulangerie Martin", "email": "marie@exemple.fr",
@@ -59,6 +63,17 @@ def test_audit_envoie_rapport_et_alerte(client, site_mauvais, brevo):
     assert rapport["replyTo"]["email"] == "simondelruepro@gmail.com"
     with stockage.connexion() as con:
         assert con.execute("SELECT email_envoye FROM audits WHERE id = ?", (ident,)).fetchone()[0] == 1
+
+
+def test_analyse_sans_email_n_envoie_rien(client, site_mauvais, brevo):
+    rep = client.post("/audit", data={"url": site_mauvais}, follow_redirects=False)
+    assert rep.status_code == 303 and brevo.envois == []
+
+
+def test_devis_prerempli(client, site_bon):
+    ident = lancer_audit(client, site_bon)
+    page = client.get(f"/rendez-vous/{ident}?offre=correction").text
+    assert "Demander mon devis" in page and "devis pour corriger" in page
 
 
 def test_bouton_rdv_mene_au_formulaire(client, site_bon):

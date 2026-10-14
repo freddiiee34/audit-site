@@ -1,28 +1,45 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr"{% if theme %} data-theme="{{ theme }}"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titre %}{{ nom_service }}{% endblock %}</title>
-  <meta name="description" content="{% block description %}Audit gratuit de votre site en 1 minute : vitesse, Google, mobile, sécurité et obligations légales, expliqués simplement.{% endblock %}">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#000000">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/style.css">
+  <meta name="description" content="{% block description %}Audit gratuit de votre site en 1 minute : vitesse, Google, mobile, sécurité, obligations légales. Par Simon Delrue, développeur web & IA à Lille.{% endblock %}">
   {% block tete %}{% endblock %}
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+  {% if theme == "alt" %}
+  <meta name="theme-color" content="#1c2326">
+  <link rel="preload" href="/static/fonts/schibsted.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/style-alt.css">
+  {% else %}
+  <meta name="theme-color" content="#15171c">
+  <link rel="preload" href="/static/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/style.css">
+  {% endif %}
 </head>
 <body>
   <header class="bandeau">
-    <a class="marque" href="/">{{ nom_service }}</a>
-    {% block bandeau %}{% endblock %}
+    <a class="marque" href="/" aria-label="Accueil de l'audit, Simon Delrue">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="17" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="6"/>
+        <path d="M32 15 A17 17 0 1 1 15.8 37.3" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="32" cy="32" r="5" fill="currentColor"/>
+      </svg>
+      <span>Simon Delrue<small>{{ titre_pro }}</small></span>
+    </a>
+    {% block bandeau %}{% if lien_realisations %}<a class="lien-bandeau" href="{{ lien_realisations }}">Mes réalisations</a>{% endif %}{% endblock %}
   </header>
   <main>
     {% block contenu %}{% endblock %}
   </main>
   <footer class="pied">
-    <p>{{ signature }} · Les emails collectés servent uniquement à envoyer votre rapport et à vous recontacter à son sujet.</p>
+    <p>{{ signature }}. Les emails collectés servent uniquement à envoyer votre rapport et à vous recontacter à son sujet.</p>
+    <nav aria-label="Informations légales">
+      <a href="/mentions-legales">Mentions légales</a>
+      <a href="/confidentialite">Politique de confidentialité</a>
+      {% if lien_realisations %}<a href="{{ lien_realisations }}">Mes réalisations</a>{% endif %}
+    </nav>
   </footer>
 </body>
 </html>
