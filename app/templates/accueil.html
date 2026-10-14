@@ -14,7 +14,7 @@
 <section class="hero">
   <p class="surtitre">Audit gratuit, résultat en une minute</p>
   <h1>Votre site vous fait&#8209;il perdre des clients&nbsp;?</h1>
-  <p class="chapo">Entrez son adresse&nbsp;: votre score s'affiche tout de suite, sans email. Ensuite, si vous le souhaitez, vous recevez les 5&nbsp;choses à corriger en priorité.</p>
+  <p class="chapo">Entrez l'adresse de votre site&nbsp;: votre score s'affiche tout de suite, sans email. Ensuite, si vous le souhaitez, vous recevez les 5&nbsp;choses à corriger en priorité.</p>
 
   <form class="formulaire" method="post" action="/audit" id="form-audit">
     {% if erreur %}<p class="alerte" role="alert">{{ erreur }}</p>{% endif %}
@@ -68,7 +68,8 @@
     <h2>Simon Delrue</h2>
     <p class="role">{{ titre_pro }}, à Lille</p>
     <p>Pendant cinq ans en agence, j'ai construit des sites, des landing pages et des campagnes emailing pour des entreprises de la région. Je suis aujourd'hui indépendant et j'aide les PME à tirer parti du web et de l'IA.</p>
-    <p>J'ai construit cet outil parce que la plupart des gérants ne savent pas ce qui freine leur site. En une minute, vous savez ce qui compte vraiment, sans jargon.</p>
+    <p><strong>Pourquoi cet audit.</strong> Un site lent, mal lu par Google ou illisible sur téléphone fait fuir des clients, sans que le gérant s'en rende compte. J'ai construit cet outil pour que vous sachiez en une minute ce qui freine le vôtre.</p>
+    <p><strong>Comment il fonctionne.</strong> L'outil visite votre page d'accueil comme le feraient Google et un visiteur. Il mesure la vitesse, vérifie ce que Google lit (titre, description, plan du site), l'affichage sur mobile, la sécurité et les mentions légales&nbsp;: une vingtaine de contrôles. L'IA rédige ensuite le rapport en mots simples et classe les 5 corrections qui auront le plus d'effet.</p>
     <p class="auteur-liens">
       {% if lien_realisations %}<a href="{{ lien_realisations }}">Voir mes réalisations</a>{% endif %}
       {% if lien_linkedin %}<a href="{{ lien_linkedin }}">LinkedIn</a>{% endif %}
