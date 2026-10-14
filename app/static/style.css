@@ -78,7 +78,7 @@ a:hover { text-decoration: underline; }
 }
 .champs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .champ label { display: block; font-size: 13px; font-weight: 500; color: var(--gris-clair); margin: 0 0 8px; }
-.formulaire input[type=text], .formulaire input[type=email] {
+.formulaire input[type=text], .formulaire input[type=email], .formulaire input[type=tel] {
   width: 100%; font: 400 17px var(--police); letter-spacing: -0.01em;
   padding: 14px 16px; border-radius: 12px;
   border: 1px solid var(--filet-fort); background: var(--champ); color: var(--texte);
@@ -88,6 +88,17 @@ a:hover { text-decoration: underline; }
 .formulaire input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(41, 151, 255, 0.25); }
 button:focus-visible, .bouton:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
+.champ-large { margin-top: 16px; }
+.facultatif { color: #6e6e73; font-weight: 400; }
+.formulaire textarea {
+  width: 100%; font: 400 17px/1.45 var(--police); letter-spacing: -0.01em; resize: vertical;
+  padding: 14px 16px; border-radius: 12px;
+  border: 1px solid var(--filet-fort); background: var(--champ); color: var(--texte);
+}
+.formulaire textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(41, 151, 255, 0.25); }
+.hero-court { padding-top: 80px; }
+.actions { margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.lien-secondaire { font-size: 17px; }
 .case { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; font-size: 13px; line-height: 1.45; color: var(--gris); cursor: pointer; }
 .case input { margin: 2px 0 0; width: 16px; height: 16px; flex: none; accent-color: var(--bouton); }
 .piege { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }

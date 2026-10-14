@@ -27,6 +27,19 @@ CREATE TABLE IF NOT EXISTS audits (
     email_envoye INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_audits_email ON audits(email, cree_le);
+CREATE TABLE IF NOT EXISTS rendez_vous (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    audit_id TEXT NOT NULL REFERENCES audits(id),
+    cree_le TEXT NOT NULL,
+    nom TEXT NOT NULL,
+    entreprise TEXT NOT NULL,
+    email TEXT NOT NULL,
+    telephone TEXT NOT NULL,
+    disponibilites TEXT NOT NULL,
+    message TEXT NOT NULL,
+    notifie INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_rdv_audit ON rendez_vous(audit_id);
 CREATE INDEX IF NOT EXISTS idx_audits_ip ON audits(ip_hash, cree_le);
 """
 
@@ -86,6 +99,30 @@ def enregistrer(url: str, email: str, ip: str, audit: dict, rapport: dict) -> st
 def marquer_email_envoye(ident: str) -> None:
     with connexion() as con:
         con.execute("UPDATE audits SET email_envoye = 1 WHERE id = ?", (ident,))
+
+
+LIMITE_RDV_PAR_AUDIT = 3
+
+
+def nombre_rdv(audit_id: str) -> int:
+    with connexion() as con:
+        return con.execute("SELECT COUNT(*) FROM rendez_vous WHERE audit_id = ?", (audit_id,)).fetchone()[0]
+
+
+def enregistrer_rdv(audit_id: str, rdv: dict) -> int:
+    with connexion() as con:
+        cur = con.execute(
+            "INSERT INTO rendez_vous (audit_id, cree_le, nom, entreprise, email, telephone, disponibilites, message) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (audit_id, datetime.now(timezone.utc).isoformat(), rdv["nom"], rdv["entreprise"], rdv["email"],
+             rdv["telephone"], rdv["disponibilites"], rdv["message"]),
+        )
+        return cur.lastrowid
+
+
+def marquer_rdv_notifie(rdv_id: int) -> None:
+    with connexion() as con:
+        con.execute("UPDATE rendez_vous SET notifie = 1 WHERE id = ?", (rdv_id,))
 
 
 def charger(ident: str) -> dict | None:

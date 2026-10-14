@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block titre %}Prendre rendez-vous · {{ nom_service }}{% endblock %}
+{% block tete %}<meta name="robots" content="noindex">{% endblock %}
+{% block contenu %}
+<section class="hero hero-court">
+  {% if envoye %}
+    <p class="surtitre">Demande envoyée</p>
+    <h1>Merci, {{ champs.nom }}.</h1>
+    <p class="chapo">Je reviens vers vous sous 24&nbsp;h ouvrées pour fixer un créneau de 20&nbsp;minutes.{% if email_actif %} Une confirmation vous a été envoyée par email.{% endif %}</p>
+    <div class="actions">
+      {% if lien_agenda %}<a class="bouton" href="{{ lien_agenda }}">Choisir directement un créneau</a>{% endif %}
+      <a class="lien-secondaire" href="/rapport/{{ ident }}">Revenir au rapport</a>
+    </div>
+  {% else %}
+    <p class="surtitre">Échange gratuit de 20 minutes</p>
+    <h1>Parlons de votre site.</h1>
+    <p class="chapo">On passe en revue votre audit ({{ audit.score }}/100) : ce que vous pouvez corriger vous-même, et ce qui demande un développeur.</p>
+
+    <form class="formulaire" method="post" action="/rendez-vous/{{ ident }}">
+      {% if erreur %}<p class="alerte" role="alert">{{ erreur }}</p>{% endif %}
+      <div class="champs">
+        <div class="champ">
+          <label for="nom">Nom et prénom</label>
+          <input id="nom" name="nom" type="text" value="{{ champs.nom or '' }}" required autocomplete="name" maxlength="100">
+        </div>
+        <div class="champ">
+          <label for="entreprise">Entreprise <span class="facultatif">facultatif</span></label>
+          <input id="entreprise" name="entreprise" type="text" value="{{ champs.entreprise or '' }}" autocomplete="organization" maxlength="150">
+        </div>
+        <div class="champ">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" value="{{ champs.email or '' }}" required autocomplete="email" maxlength="200">
+        </div>
+        <div class="champ">
+          <label for="telephone">Téléphone <span class="facultatif">facultatif</span></label>
+          <input id="telephone" name="telephone" type="tel" value="{{ champs.telephone or '' }}" autocomplete="tel" maxlength="30">
+        </div>
+      </div>
+      <div class="champ champ-large">
+        <label for="disponibilites">Vos disponibilités</label>
+        <input id="disponibilites" name="disponibilites" type="text" placeholder="Ex. : mardi ou jeudi matin" value="{{ champs.disponibilites or '' }}" maxlength="500">
+      </div>
+      <div class="champ champ-large">
+        <label for="message">Un point en particulier ? <span class="facultatif">facultatif</span></label>
+        <textarea id="message" name="message" rows="4" maxlength="2000">{{ champs.message or '' }}</textarea>
+      </div>
+      <div class="piege" aria-hidden="true">
+        <label for="site_web">Ne pas remplir</label>
+        <input id="site_web" name="site_web" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <button type="submit">Demander un rendez-vous</button>
+      <p class="attente">Pour le site {{ audit.url_finale }}. Vos coordonnées servent uniquement à vous recontacter.</p>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

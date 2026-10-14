@@ -15,6 +15,14 @@ Un gérant de PME entre l'adresse de son site et reçoit en moins d'une minute u
 
 Chaque contrôle produit un constat mesuré, un enjeu (ce que ça coûte à l'entreprise) et un conseil. Le score sur 100 est une moyenne pondérée par l'impact de chaque contrôle.
 
+## Le parcours et les emails
+
+1. Le visiteur lance un audit : il reçoit son **rapport par email**, et toi une **alerte « nouvel audit »** (site, email, score, lien du rapport).
+2. Depuis le rapport, le bouton **« Prendre rendez-vous »** ouvre un formulaire (nom, entreprise, email, téléphone, disponibilités, message).
+3. À l'envoi, tu reçois un email **« RDV demandé »** avec toutes ses infos et le lien de son rapport. Répondre à cet email écrit directement au prospect. Le visiteur reçoit une confirmation.
+
+Toutes les demandes sont aussi enregistrées dans la base (table `rendez_vous`), même si l'envoi d'email échoue.
+
 ## Le rôle de l'IA, et ses garde-fous
 
 L'IA ne fait **pas** l'analyse : elle reçoit uniquement les constats mesurés et les reformule pour un non-technicien.
@@ -77,13 +85,25 @@ Les fois suivantes, il suffit de te placer dans le dossier, d'activer l'environn
 | --- | --- |
 | `ANTHROPIC_API_KEY` | Active la rédaction par l'IA (facultatif) |
 | `AUDIT_MODELE` | Modèle utilisé (défaut : `claude-haiku-5-5`, le moins cher) |
-| `BREVO_API_KEY`, `EXPEDITEUR_EMAIL`, `EXPEDITEUR_NOM` | Envoi du rapport par email (facultatif) |
-| `LIEN_RDV` | Lien du bouton « Prendre rendez-vous » (Calendly, Cal.com, mailto…) |
+| `BREVO_API_KEY`, `EXPEDITEUR_EMAIL`, `EXPEDITEUR_NOM` | Active l'envoi de tous les emails. Sans eux, rien n'est envoyé |
+| `NOTIF_EMAIL` | Où tu reçois les alertes de nouvel audit et les demandes de RDV |
+| `URL_PUBLIQUE` | Adresse du site utilisée dans les liens des emails (ex. `https://audit.simondelrue.fr`) |
+| `LIEN_AGENDA` | Facultatif : lien Calendly ou Cal.com proposé après une demande de RDV |
 | `NOM_SERVICE`, `SIGNATURE` | Nom affiché et signature en pied de page |
 | `AUDIT_DB` | Chemin de la base SQLite (défaut : `audits.db`) |
 | `AUDIT_SEL` | Sel pour hacher les adresses IP : **à changer** |
 | `AUDIT_LIMITE_EMAIL`, `AUDIT_LIMITE_IP` | Audits autorisés par 24 h (défaut : 3 et 10) |
 | `DERRIERE_PROXY` | `1` si l'app tourne derrière un proxy (lit `X-Forwarded-For`) |
+
+### Brancher Brevo (envoi des emails)
+
+1. Crée un compte sur brevo.com (l'offre gratuite suffit pour démarrer).
+2. **Valide ton domaine** : *Expéditeurs, domaines et IP dédiées › Domaines*, ajoute `simondelrue.fr` et copie chez OVH (Zone DNS) les entrées que Brevo affiche (code Brevo, DKIM, DMARC). Sans ça, tes emails risquent de finir en spam.
+3. **Ajoute l'expéditeur** `audit@simondelrue.fr` (ou `contact@…`) dans *Expéditeurs*. C'est la valeur de `EXPEDITEUR_EMAIL`.
+4. **Crée une clé API** : *SMTP & API › Clés API*. C'est la valeur de `BREVO_API_KEY`.
+5. Si Brevo active la restriction par adresse IP sur ton compte (*Sécurité › IP autorisées*), ajoute l'IP de ton serveur, sinon les envois sont refusés.
+
+En cas de souci, les journaux de l'application affichent le message exact renvoyé par Brevo (ligne « Brevo a refusé l'email »).
 
 ## Sécurité et RGPD
 
